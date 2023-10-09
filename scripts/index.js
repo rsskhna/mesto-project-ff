@@ -15,10 +15,9 @@ function addCard(cardsInfo, deleteFunc) {
         cardImage.src = cardsInfo[i].link;
         cardImage.alt = cardsInfo[i].name;
         cardTitle.textContent = cardsInfo[i].name;
-
+        
         deleteButton.addEventListener('click', function () {
-            const placesItem = deleteButton.closest('.places__item');
-            placesItem.remove();
+            deleteFunc(deleteButton);
         })
 
         arrOfCards.push(card);
@@ -27,7 +26,10 @@ function addCard(cardsInfo, deleteFunc) {
     return arrOfCards;
 }
 
-function removeCard() {}
+function removeCard(button) {
+    const placesItem = button.closest('.places__item');
+    placesItem.remove();
+}
 
 addCard(initialCards, removeCard);
 
