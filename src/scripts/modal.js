@@ -1,52 +1,43 @@
 export {openModal, closeModal};
 
-function openModal(event) {
-    const editPopup = document.querySelector('.popup_type_edit');
-    const newCardPopup = document.querySelector('.popup_type_new-card');
+const popups = document.querySelectorAll('.popup');
 
-    if (event.target.classList.contains('profile__edit-button')) {
-        editPopup.classList.add('popup_is-animated', 'popup_is-opened');
+function openModal(popup) {
+    popup.classList.add('popup_is-opened');
 
-        editPopup.addEventListener('click', closeModal);
-    } else if (event.target.classList.contains('profile__add-button')) {
-        newCardPopup.classList.add('popup_is-animated', 'popup_is-opened');
-
-        newCardPopup.addEventListener('click', closeModal);
-    }
-
-    document.addEventListener('keydown', closeModal);
+    document.addEventListener('keydown', function (evt) {
+        closeByEscape(evt);
+    });
 }
 
-function closeModal(event) {
-    closeModalByTapCross(event);
-    closeModalByTapOverlay(event);
-    closeModalByPressEscape(event);
+function closeModal(popup) {
+    popup.classList.remove('popup_is-opened');
+
+    document.removeEventListener('keydown', function (evt) {
+        closeByEscape(evt);
+    });
 }
 
-function closeModalByTapCross(event) {
-    if (event.target.classList.contains('popup__close')) {
-        removeClass(event.currentTarget);
-    }
-}
+function closeByEscape(event) {
+    let openedPopup = document.querySelector('.popup_is-opened');
 
-function closeModalByTapOverlay(event) {
-    if (event.target.classList.contains('popup')) {
-        removeClass(event.currentTarget);
-    }
-}
-
-function closeModalByPressEscape(event) {
-    if (event.key === 'Escape'
-        && document.querySelector('.popup_is-opened')
-    ) {
+    if (event.key === 'Escape' && openedPopup) {
         event.preventDefault();
-        removeClass(document.querySelector('.popup_is-opened'));
-        document.removeEventListener('keydown', closeModal);
+        closeModal(openedPopup);
     }
 }
 
-function removeClass(activePopup) {
-    activePopup.classList.remove('popup_is-opened');
-}
+popups.forEach((popup) => {
+    popup.classList.add('popup_is-animated');
+})
+
+popups.forEach((popup) => {
+    popup.addEventListener('mousedown', (evt) => {
+        if (evt.target.classList.contains('popup_is-opened')
+            || evt.target.classList.contains('popup__close')) {
+            closeModal(popup);
+        }
+    })
+})
 
 
