@@ -5,23 +5,19 @@ const popups = document.querySelectorAll('.popup');
 function openModal(popup) {
     popup.classList.add('popup_is-opened');
 
-    document.addEventListener('keydown', function (evt) {
-        closeByEscape(evt);
-    });
+    document.addEventListener('keydown', closeByEscape);
 }
 
 function closeModal(popup) {
     popup.classList.remove('popup_is-opened');
 
-    document.removeEventListener('keydown', function (evt) {
-        closeByEscape(evt);
-    });
+    document.removeEventListener('keydown', closeByEscape);
 }
 
 function closeByEscape(event) {
-    let openedPopup = document.querySelector('.popup_is-opened');
+    if (event.key === 'Escape') {
+        const openedPopup = document.querySelector('.popup_is-opened');
 
-    if (event.key === 'Escape' && openedPopup) {
         event.preventDefault();
         closeModal(openedPopup);
     }
