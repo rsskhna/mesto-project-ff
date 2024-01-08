@@ -1,6 +1,6 @@
-export {openModal, closeModal};
+export {openModal, closeModal, handlePopupClose};
 
-const popups = document.querySelectorAll('.popup');
+
 
 function openModal(popup) {
     popup.classList.add('popup_is-opened');
@@ -23,17 +23,13 @@ function closeByEscape(event) {
     }
 }
 
-popups.forEach((popup) => {
-    popup.classList.add('popup_is-animated');
-})
+function handlePopupClose (event, popup) {
+    if (event.target.classList.contains('popup_is-opened')
+        || event.target.classList.contains('popup__close')) {
+        closeModal(popup);
+    }
+}
 
-popups.forEach((popup) => {
-    popup.addEventListener('mousedown', (evt) => {
-        if (evt.target.classList.contains('popup_is-opened')
-            || evt.target.classList.contains('popup__close')) {
-            closeModal(popup);
-        }
-    })
-})
+
 
 

@@ -1,9 +1,29 @@
-import './index.css';
-import {createCard, deleteCard, likeCard} from './scripts/card';
-import {openModal, closeModal} from './scripts/modal';
-import {enableValidation, clearValidation} from "./scripts/validation";
-import {getCards, getUserInfo, patchProfileInfo, postNewCard, patchAvatar} from "./scripts/api";
+import '../index.css';
+import {
+    createCard,
+    deleteCard,
+    likeCard
+} from './card';
+import {
+    openModal,
+    closeModal,
+    handlePopupClose
+} from './modal';
+import {
+    enableValidation,
+    clearValidation
+} from "./validation";
+import {
+    getResponseData,
+    getCardsApi,
+    getUserInfoApi,
+    patchProfileInfoApi,
+    postNewCardApi,
+    patchAvatarApi,
+    logError,
+} from "./api";
 
+const popups = document.querySelectorAll('.popup');
 const editPopup = document.querySelector('.popup_type_edit');
 const editSubmitButton = editPopup.querySelector('.popup__button');
 const newCardPopup = document.querySelector('.popup_type_new-card');
@@ -47,6 +67,8 @@ const userDescription = document.querySelector('.profile__description');
 const userAvatar = document.querySelector('.profile__image');
 const editIcon = document.querySelector('.profile__edit-img');
 
+let userId = '';
+
 function openImagePopup(cardInfo) {
     image.src = cardInfo.link;
     image.alt = cardInfo.name;
@@ -61,22 +83,22 @@ function handleEditFormSubmit(event) {
     profileName.textContent = nameInput.value;
     profileDescription.textContent = descriptionInput.value;
 
-    editSubmitButton.textContent = 'Сохранение...';
-
-    patchProfileInfo(nameInput, descriptionInput)
+    patchProfileInfoApi(nameInput, descriptionInput)
+        .then(res => getResponseData(res))
         .then(res => closeModal(editPopup))
+        .catch(err => logError(err))
+        .finally(() => editSubmitButton.textContent = 'Сохранение...');
 }
 
 function handleNewCardFormSubmit(event) {
     event.preventDefault();
-
     const newCard = createCard(
         {
             name: placeInput.value,
             link: imageInput.value,
             likes: [],
             owner: {
-                getUserInfo,
+                _id: userId,
             }
         },
         deleteCard,
@@ -85,10 +107,11 @@ function handleNewCardFormSubmit(event) {
     );
     placesList.prepend(newCard);
 
-    newCardSubmitButton.textContent = 'Сохранение...';
-
-    postNewCard(placeInput, imageInput)
-        .then(res => closeModal(newCardPopup));
+    postNewCardApi(placeInput, imageInput)
+        .then(res => getResponseData(res))
+        .then(res => closeModal(newCardPopup))
+        .catch(err => logError(err))
+        .finally(() => editSubmitButton.textContent = 'Сохранение...');
 }
 
 function handleAvatarEditFormSubmit(event) {
@@ -96,33 +119,41 @@ function handleAvatarEditFormSubmit(event) {
 
     profileImage.style.backgroundImage = 'url(' + avatarInput.value + ')';
 
-    avatarSubmitButton.textContent = 'Сохранение...';
-
-    patchAvatar(avatarInput)
-        .then(res => closeModal(avatarPopup));
+    patchAvatarApi(avatarInput)
+        .then(res => getResponseData(res))
+        .then(res => closeModal(avatarPopup))
+        .catch(err => logError(err))
+        .finally(() => editSubmitButton.textContent = 'Сохранение...');
 }
 
-Promise.all([getUserInfo(), getCards()])
-    .then(res => {
+Promise.all([getUserInfoApi(), getCardsApi()])
+    .then(([userInfo, cards]) => {
 
-        let userInfo = res.at(0)
         userName.textContent = userInfo.name;
         userDescription.textContent = userInfo.about;
         userAvatar.style.backgroundImage = `url(${userInfo.avatar})`;
+        userId = userInfo['_id'];
 
-        let cards = res.at(1)
         cards
             .map(cardInfo => createCard(
                 cardInfo,
                 deleteCard,
                 likeCard,
                 openImagePopup,
-                userInfo['_id']
+                userId
             ))
             .forEach(card => placesList.append(card));
-    });
+    })
+    .catch(err => logError(err));
 
 enableValidation(formConfiguration);
+
+popups.forEach((popup) => {
+    popup.classList.add('popup_is-animated');
+    popup.addEventListener('mousedown', (evt) => {
+        handlePopupClose(evt, popup)
+    })
+})
 
 editButton.addEventListener('click', function () {
     editSubmitButton.textContent = 'Сохранить';

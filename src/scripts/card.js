@@ -1,5 +1,15 @@
-export {createCard, deleteCard, likeCard}
-import {putLikeOnCard, deleteLikeFromCard, deleteCardFromServer} from "./api";
+export {
+    createCard,
+    deleteCard,
+    likeCard
+}
+import {
+    getResponseData,
+    putLikeOnCardApi,
+    deleteLikeFromCardApi,
+    deleteCardFromServerApi,
+    logError
+} from "./api";
 
 const cardTemplate = document.querySelector('#card-template').content;
 
@@ -42,20 +52,30 @@ function createCard(cardInfo, deleteFunc, likeFunc, openImageFunc, ownerId) {
 
 function deleteCard(button, cardInfo) {
     const placesItem = button.closest('.places__item');
-    placesItem.remove();
 
-    deleteCardFromServer(cardInfo['_id']);
+    deleteCardFromServerApi(cardInfo['_id'])
+        .then(res => getResponseData(res))
+        .then(res => placesItem.remove())
+        .catch(err => logError(err));
 }
 
 function likeCard(event, cardInfo, likesNumber) {
     if (event.target.classList.contains('card__like-button_is-active')) {
-        deleteLikeFromCard(cardInfo['_id']);
-        event.target.classList.toggle('card__like-button_is-active');
-        likesNumber.textContent--;
+        deleteLikeFromCardApi(cardInfo['_id'])
+            .then(res => getResponseData(res))
+            .then(res => {
+                event.target.classList.toggle('card__like-button_is-active');
+                likesNumber.textContent--;
+            })
+            .catch(err => logError(err));
     } else {
-        putLikeOnCard(cardInfo['_id']);
-        event.target.classList.toggle('card__like-button_is-active');
-        likesNumber.textContent++;
+        putLikeOnCardApi(cardInfo['_id'])
+            .then(res => getResponseData(res))
+            .then(res => {
+                event.target.classList.toggle('card__like-button_is-active');
+                likesNumber.textContent++;
+            })
+            .catch(err => logError(err));
     }
 }
 

@@ -1,32 +1,52 @@
-export {getCards, getUserInfo, patchProfileInfo, postNewCard, putLikeOnCard, deleteLikeFromCard, deleteCardFromServer, patchAvatar};
+export {
+    getResponseData,
+    logError,
+    getCardsApi,
+    getUserInfoApi,
+    patchProfileInfoApi,
+    postNewCardApi,
+    putLikeOnCardApi,
+    deleteLikeFromCardApi,
+    deleteCardFromServerApi,
+    patchAvatarApi
+};
 
 const COHORT = 'wff-cohort-4';
 const TOKEN = '4fe98c95-18ba-48c9-878c-8bb8056c2c44';
 const BASE_URL = 'https://nomoreparties.co/v1';
 
-const getCards = () => {
+function getResponseData(res) {
+    if (!res.ok) {
+        return Promise.reject(`Ошибка: ${res.status}`);
+    }
+    return res.json();
+}
+
+function logError(error) {
+    return console.log(`Ошибка.....: ${error}`);
+}
+
+const getCardsApi = () => {
     return fetch(BASE_URL + '/' + COHORT + '/cards', {
         method: 'GET',
         headers: {
             authorization: TOKEN
         }
     })
-        .then(res => res.json())
-        .catch(err => console.log(err))
+    .then(res => getResponseData(res))
 }
 
-const getUserInfo = () => {
+const getUserInfoApi = () => {
     return fetch(BASE_URL + '/' + COHORT + '/users/me', {
         method: 'GET',
         headers: {
             authorization: TOKEN
         }
     })
-        .then(res => res.json())
-        .catch(err => console.log(err))
+    .then(res => getResponseData(res))
 }
 
-const patchProfileInfo = (userName, userDescription) => {
+const patchProfileInfoApi = (userName, userDescription) => {
     return fetch(BASE_URL + '/' + COHORT + '/users/me', {
         method: 'PATCH',
         headers: {
@@ -38,11 +58,9 @@ const patchProfileInfo = (userName, userDescription) => {
             about: userDescription.value
         })
     })
-        .then(ignored => ignored)
-        .catch(err => console.log(err))
 }
 
-const postNewCard = (cardName, cardLink) => {
+const postNewCardApi = (cardName, cardLink) => {
     return fetch(BASE_URL + '/' + COHORT + '/cards', {
         method: 'POST',
         headers: {
@@ -54,41 +72,36 @@ const postNewCard = (cardName, cardLink) => {
             link: cardLink.value
         })
     })
-        .then(ignored => ignored)
-        .catch(err => console.log(err))
 }
 
-const putLikeOnCard = (cardId) => {
-    fetch(BASE_URL + '/' + COHORT + '/cards/likes/' + cardId, {
+const putLikeOnCardApi = (cardId) => {
+    return fetch(BASE_URL + '/' + COHORT + '/cards/likes/' + cardId, {
         method: 'PUT',
         headers: {
             authorization: TOKEN
-        }})
-        .then(ignored => ignored)
-        .catch(err => console.log(err))
+        }
+    })
 }
 
-const deleteLikeFromCard = (cardId) => {
-    fetch(BASE_URL + '/' + COHORT + '/cards/likes/' + cardId, {
+const deleteLikeFromCardApi = (cardId) => {
+    return fetch(BASE_URL + '/' + COHORT + '/cards/likes/' + cardId, {
         method: 'DELETE',
         headers: {
             authorization: TOKEN
-        }})
-        .then(ignored => ignored)
-        .catch(err => console.log(err))
+        }
+    })
 }
 
-const deleteCardFromServer = (cardId) => {
-    fetch(BASE_URL + '/' + COHORT + '/cards/' + cardId, {
+const deleteCardFromServerApi = (cardId) => {
+    return fetch(BASE_URL + '/' + COHORT + '/cards/' + cardId, {
         method: 'DELETE',
         headers: {
             authorization: TOKEN
-        }})
-        .then(ignored => ignored)
-        .catch(err => console.log(err))
+        }
+    })
 }
 
-const patchAvatar = (avatarLink) => {
+const patchAvatarApi = (avatarLink) => {
     return fetch(BASE_URL + '/' + COHORT + '/users/me/avatar', {
         method: 'PATCH',
         headers: {
@@ -99,6 +112,4 @@ const patchAvatar = (avatarLink) => {
             avatar: avatarLink.value,
         })
     })
-        .then(ignored => ignored)
-        .catch(err => console.log(err))
 }
