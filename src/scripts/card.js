@@ -35,12 +35,12 @@ function createCard(cardInfo, deleteFunc, likeFunc, openImageFunc, ownerId) {
 
     cardInfo.likes.forEach(userInfo => {
         if (userInfo['_id'] === ownerId) {
-            likeButton.classList.add('card__like-button_is-active')
+            likeButton.classList.add('card__like-button_is-active');
         }
     })
 
     likeButton.addEventListener('click', function (evt) {
-        likeFunc(evt, cardInfo, likesNumber)
+        likeFunc(evt, cardInfo, likesNumber);
     });
 
     cardImage.addEventListener('click', function () {
@@ -54,7 +54,6 @@ function deleteCard(button, cardInfo) {
     const placesItem = button.closest('.places__item');
 
     deleteCardFromServerApi(cardInfo['_id'])
-        .then(res => getResponseData(res))
         .then(res => placesItem.remove())
         .catch(err => logError(err));
 }
@@ -62,7 +61,6 @@ function deleteCard(button, cardInfo) {
 function likeCard(event, cardInfo, likesNumber) {
     if (event.target.classList.contains('card__like-button_is-active')) {
         deleteLikeFromCardApi(cardInfo['_id'])
-            .then(res => getResponseData(res))
             .then(res => {
                 event.target.classList.toggle('card__like-button_is-active');
                 likesNumber.textContent--;
@@ -70,7 +68,6 @@ function likeCard(event, cardInfo, likesNumber) {
             .catch(err => logError(err));
     } else {
         putLikeOnCardApi(cardInfo['_id'])
-            .then(res => getResponseData(res))
             .then(res => {
                 event.target.classList.toggle('card__like-button_is-active');
                 likesNumber.textContent++;

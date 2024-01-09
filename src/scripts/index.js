@@ -80,14 +80,16 @@ function openImagePopup(cardInfo) {
 function handleEditFormSubmit(event) {
     event.preventDefault();
 
-    profileName.textContent = nameInput.value;
-    profileDescription.textContent = descriptionInput.value;
+    editSubmitButton.textContent = 'Сохранение...';
 
     patchProfileInfoApi(nameInput, descriptionInput)
-        .then(res => getResponseData(res))
-        .then(res => closeModal(editPopup))
+        .then(res => {
+            profileName.textContent = nameInput.value;
+            profileDescription.textContent = descriptionInput.value;
+            closeModal(editPopup);
+        })
         .catch(err => logError(err))
-        .finally(() => editSubmitButton.textContent = 'Сохранение...');
+        .finally(() => editSubmitButton.textContent = 'Сохранить');
 }
 
 function handleNewCardFormSubmit(event) {
@@ -103,27 +105,35 @@ function handleNewCardFormSubmit(event) {
         },
         deleteCard,
         likeCard,
-        openImagePopup
+        openImagePopup,
+        userId
     );
-    placesList.prepend(newCard);
+
+    newCardSubmitButton.textContent = 'Сохранение...';
 
     postNewCardApi(placeInput, imageInput)
-        .then(res => getResponseData(res))
-        .then(res => closeModal(newCardPopup))
+        .then(res => {
+            closeModal(newCardPopup)
+        })
         .catch(err => logError(err))
-        .finally(() => editSubmitButton.textContent = 'Сохранение...');
+        .finally(() => {
+            newCardSubmitButton.textContent = 'Создать';
+            window.location.reload();
+        });
 }
 
 function handleAvatarEditFormSubmit(event) {
     event.preventDefault();
 
-    profileImage.style.backgroundImage = 'url(' + avatarInput.value + ')';
+    avatarSubmitButton.textContent = 'Сохранение...';
 
     patchAvatarApi(avatarInput)
-        .then(res => getResponseData(res))
-        .then(res => closeModal(avatarPopup))
+        .then(res => {
+            profileImage.style.backgroundImage = 'url(' + avatarInput.value + ')';
+            closeModal(avatarPopup);
+        })
         .catch(err => logError(err))
-        .finally(() => editSubmitButton.textContent = 'Сохранение...');
+        .finally(() => avatarSubmitButton.textContent = 'Сохранить');
 }
 
 Promise.all([getUserInfoApi(), getCardsApi()])

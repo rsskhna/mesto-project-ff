@@ -33,7 +33,7 @@ const getCardsApi = () => {
             authorization: TOKEN
         }
     })
-    .then(res => getResponseData(res))
+        .then(res => getResponseData(res))
 }
 
 const getUserInfoApi = () => {
@@ -43,7 +43,7 @@ const getUserInfoApi = () => {
             authorization: TOKEN
         }
     })
-    .then(res => getResponseData(res))
+        .then(res => getResponseData(res))
 }
 
 const patchProfileInfoApi = (userName, userDescription) => {
@@ -58,6 +58,7 @@ const patchProfileInfoApi = (userName, userDescription) => {
             about: userDescription.value
         })
     })
+        .then(res => getResponseData(res))
 }
 
 const postNewCardApi = (cardName, cardLink) => {
@@ -72,6 +73,7 @@ const postNewCardApi = (cardName, cardLink) => {
             link: cardLink.value
         })
     })
+        .then(res => getResponseData(res))
 }
 
 const putLikeOnCardApi = (cardId) => {
@@ -81,6 +83,7 @@ const putLikeOnCardApi = (cardId) => {
             authorization: TOKEN
         }
     })
+        .then(res => getResponseData(res))
 }
 
 const deleteLikeFromCardApi = (cardId) => {
@@ -90,6 +93,7 @@ const deleteLikeFromCardApi = (cardId) => {
             authorization: TOKEN
         }
     })
+        .then(res => getResponseData(res))
 }
 
 const deleteCardFromServerApi = (cardId) => {
@@ -99,6 +103,7 @@ const deleteCardFromServerApi = (cardId) => {
             authorization: TOKEN
         }
     })
+        .then(res => getResponseData(res))
 }
 
 const patchAvatarApi = (avatarLink) => {
@@ -112,4 +117,5 @@ const patchAvatarApi = (avatarLink) => {
             avatar: avatarLink.value,
         })
     })
+        .then(res => getResponseData(res))
 }
